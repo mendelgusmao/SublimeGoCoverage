@@ -1,0 +1,3 @@
+[
+	{ "keys": ["ctrl+alt+g"], "command": "show_go_coverage"}
+]
