@@ -13,7 +13,10 @@ class ShowGoCoverageListener(sublime_plugin.EventListener):
 	"""Event listener to highlight uncovered lines when a Go file is loaded."""
 
 	def on_post_save_async(self, view):
-		view.run_command('show_go_coverage')
+		view.run_command("show_go_coverage")
+
+	def on_load_async(self, view):
+		create_outlines(view, parse_filename(view.file_name()))
 
 class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 	"""Run gocov and highlight uncovered lines in the current file."""
@@ -30,7 +33,7 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 			return
 
 		file_info = parse_filename(filename)
-		cover_profile = run_coverage(file_info)
+		run_coverage(file_info)
 		update_views(file_info)
 
 def parse_filename(filename):
@@ -56,7 +59,6 @@ def run_coverage(file_info):
 	
 	runner = sublime.load_settings(settings).get("runner") or "go-test"
 	moreargs = sublime.load_settings(settings).get("moreargs") or ""
-
 	cmd = ""
 
 	if runner == "go-test":
@@ -65,8 +67,6 @@ def run_coverage(file_info):
 		cmd = "ginkgo %s -cover %s" % (moreargs, package_dir)
 
 	subprocess.check_output(shlex.split(cmd))
-
-	return cover_profile
 
 def update_views(file_info):
 	for window in sublime.windows():
@@ -83,7 +83,6 @@ def create_outlines(view, file_info):
 	view.erase_regions("SublimeGoCoverage")
 
 	outlines = []
-
 	cover_profile = file_info["cover_profile"]
 
 	for line in parse_coverage_profile(cover_profile):
