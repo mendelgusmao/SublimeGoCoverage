@@ -29,14 +29,28 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 		if not filename:
 			return
 
-		coverprofile = run_coverage(filename)
-		create_outlines(view, coverprofile)
+		file_info = parse_filename(filename)
+		cover_profile = run_coverage(file_info)
+		update_views(file_info)
 
-def run_coverage(filename):
+def parse_filename(filename):
 	package_dir = os.path.dirname(filename)
 	package_name = os.path.basename(package_dir)
 	package_full_name = package_dir.replace(gopath + "/src/", "")
-	coverprofile = "%s/%s.coverprofile" % (package_dir, package_name)
+	cover_profile = "%s/%s.coverprofile" % (package_dir, package_name)	
+
+	return {
+		"filename": filename,
+		"package_dir": package_dir,
+		"package_name": package_name,
+		"package_full_name": package_full_name,
+		"cover_profile": cover_profile
+	}
+
+def run_coverage(file_info):
+	package_full_name = file_info["package_full_name"]
+	package_dir = file_info["package_dir"]
+	cover_profile = file_info["cover_profile"]
 
 	print("Generating coverage profile for", package_full_name)
 	
@@ -46,21 +60,33 @@ def run_coverage(filename):
 	cmd = ""
 
 	if runner == "go-test":
-		cmd = "go test %s -cover -coverprofile=%s %s" % (moreargs, coverprofile, package_full_name)
+		cmd = "go test %s -cover -coverprofile=%s %s" % (moreargs, cover_profile, package_full_name)
 	elif runner == "ginkgo":
 		cmd = "ginkgo %s -cover %s" % (moreargs, package_dir)
 
 	subprocess.check_output(shlex.split(cmd))
 
-	return coverprofile
+	return cover_profile
 
-def create_outlines(view, coverprofile):
+def update_views(file_info):
+	for window in sublime.windows():
+		for view in window.views():
+			other_file_info = parse_filename(view.file_name())
+
+			if file_info["package_full_name"] == other_file_info["package_full_name"]:
+				create_outlines(view, other_file_info)
+
+def create_outlines(view, file_info):
+	print("Creating outlines for", file_info["filename"])
+
 	view.erase_status("SublimeGoCoverage")
 	view.erase_regions("SublimeGoCoverage")
 
 	outlines = []
 
-	for line in parse_coverage_file(coverprofile):
+	cover_profile = file_info["cover_profile"]
+
+	for line in parse_coverage_profile(cover_profile):
 		if line["count"] == "0" and view.file_name().endswith(line["filename"]):
 			start = int(line["start_line"])
 			end = int(line["end_line"])
@@ -72,7 +98,7 @@ def create_outlines(view, coverprofile):
 	if outlines:
 		view.add_regions("SublimeGoCoverage", outlines, "coverage.uncovered", "dot", sublime.HIDDEN)
 
-def parse_coverage_file(filename):
+def parse_coverage_profile(filename):
 	lines = []
 
 	try:
