@@ -33,7 +33,7 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 			return
 
 		file_info = parse_filename(filename)
-		run_coverage(file_info)
+		run_tests(file_info)
 		update_views(file_info)
 
 def parse_filename(filename):
@@ -50,7 +50,7 @@ def parse_filename(filename):
 		"cover_profile": cover_profile
 	}
 
-def run_coverage(file_info):
+def run_tests(file_info):
 	package_full_name = file_info["package_full_name"]
 	package_dir = file_info["package_dir"]
 	cover_profile = file_info["cover_profile"]
