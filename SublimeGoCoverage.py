@@ -57,14 +57,14 @@ def run_coverage(file_info):
 
 	print("Generating coverage profile for", package_full_name)
 	
-	runner = sublime.load_settings(settings).get("runner") or "go-test"
+	runner = sublime.load_settings(settings).get("runner") or "go"
 	moreargs = sublime.load_settings(settings).get("moreargs") or ""
 	cmd = ""
 
-	if runner == "go-test":
+	if runner == "go":
 		cmd = "go test %s -cover -coverprofile=%s %s" % (moreargs, cover_profile, package_full_name)
 	elif runner == "ginkgo":
-		cmd = "ginkgo %s -cover %s" % (moreargs, package_dir)
+		cmd = gopath+"/bin/ginkgo %s -cover %s" % (moreargs, package_dir)
 
 	subprocess.check_output(shlex.split(cmd))
 
