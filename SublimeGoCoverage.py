@@ -65,6 +65,8 @@ def run_tests(file_info):
 		cmd = "go test %s -cover -coverprofile=%s %s" % (moreargs, cover_profile, package_full_name)
 	elif runner == "ginkgo":
 		cmd = gopath+"/bin/ginkgo %s -cover %s" % (moreargs, package_dir)
+	else:
+		print("Wrong value for 'runner' it should be 'go' or 'ginkgo'.")
 
 	subprocess.check_output(shlex.split(cmd))
 
@@ -109,7 +111,7 @@ def parse_coverage_profile(filename):
 					continue
 
 				lines.append(match.groupdict())
-	except:
-		print("error!")
+	except Exception as e:
+		print("Error reading coverage file: ", e)
 
 	return lines
