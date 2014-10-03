@@ -33,8 +33,8 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 			return
 
 		file_info = parse_filename(filename)
-		run_tests(file_info)
-		update_views(file_info)
+		if run_tests(file_info):
+			update_views(file_info)
 
 def parse_filename(filename):
 	package_dir = os.path.dirname(filename)
@@ -68,7 +68,13 @@ def run_tests(file_info):
 	else:
 		print("Wrong value for 'runner' it should be 'go' or 'ginkgo'.")
 
-	subprocess.check_output(shlex.split(cmd))
+	try:
+		subprocess.check_output(shlex.split(cmd))
+	except subprocess.CalledProcessError as e:
+		print("Error running tests:", e)
+		return False
+
+	return True
 
 def update_views(file_info):
 	for window in sublime.windows():
