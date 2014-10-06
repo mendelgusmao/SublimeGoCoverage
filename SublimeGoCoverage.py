@@ -43,6 +43,7 @@ def parse_filename(filename):
 	cover_profile = "%s/%s.coverprofile" % (package_dir, package_name)	
 
 	return {
+		"gopath": gopath,
 		"filename": filename,
 		"package_dir": package_dir,
 		"package_name": package_name,
@@ -57,19 +58,13 @@ def run_tests(file_info):
 
 	print("Generating coverage profile for", package_full_name)
 	
-	runner = sublime.load_settings(settings).get("runner") or "go"
-	moreargs = sublime.load_settings(settings).get("moreargs") or ""
-	cmd = ""
+	command_line = sublime.load_settings(settings).get("command_line")
 
-	if runner == "go":
-		cmd = "go test %s -cover -coverprofile=%s %s" % (moreargs, cover_profile, package_full_name)
-	elif runner == "ginkgo":
-		cmd = gopath+"/bin/ginkgo %s -cover %s" % (moreargs, package_dir)
-	else:
-		print("Wrong value for 'runner' it should be 'go' or 'ginkgo'.")
+	if type(command_line) is not str or len(command_line) == 0:
+		print("Can't run tests. Invalid 'command_line' configuration entry.")
 
 	try:
-		subprocess.check_output(shlex.split(cmd))
+		subprocess.check_output(shlex.split(command_line % file_info))
 	except subprocess.CalledProcessError as e:
 		print("Error running tests:", e)
 		return False

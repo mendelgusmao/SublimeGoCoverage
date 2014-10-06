@@ -1,3 +1,6 @@
 {
-	"runner": "go"
+	"command_line": "go test -cover -coverprofile=%(cover_profile)s %(package_full_name)s"
+
+	// command line examples
+	// ginkgo -> %(gopath)s/bin/ginkgo -cover %(package_dir)s
 }
