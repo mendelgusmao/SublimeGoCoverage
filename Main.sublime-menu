@@ -1,0 +1,35 @@
+[
+    {
+        "mnemonic": "n", 
+        "caption": "Preferences", 
+        "id": "preferences", 
+        "children": [
+            {
+                "mnemonic": "P", 
+                "caption": "Package Settings", 
+                "id": "package-settings", 
+                "children": [
+                    {
+                        "caption": "Go Coverage", 
+                        "children": [
+                            {
+                                "caption": "Settings \u2013 Default", 
+                                "args": {
+                                    "file": "${packages}/SublimeGoCoverage/SublimeGoCoverage.sublime-settings"
+                                }, 
+                                "command": "open_file"
+                            }, 
+                            {
+                                "caption": "Settings \u2013 User", 
+                                "args": {
+                                    "file": "${packages}/User/SublimeGoCoverage.sublime-settings"
+                                }, 
+                                "command": "open_file"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
