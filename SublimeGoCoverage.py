@@ -33,6 +33,7 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 			return
 
 		file_info = parse_filename(filename)
+
 		if run_tests(file_info):
 			update_views(file_info)
 
@@ -40,16 +41,23 @@ def parse_filename(filename):
 	package_dir = os.path.dirname(filename)
 	package_name = os.path.basename(package_dir)
 	package_full_name = package_dir.replace(gopath + "/src/", "")
-	cover_profile = "%s/%s.coverprofile" % (package_dir, package_name)	
 
-	return {
+	data = {
 		"gopath": gopath,
 		"filename": filename,
 		"package_dir": package_dir,
 		"package_name": package_name,
-		"package_full_name": package_full_name,
-		"cover_profile": cover_profile
+		"package_full_name": package_full_name
 	}
+
+	cover_profile_path = sublime.load_settings(settings).get("cover_profile_path")
+
+	if type(cover_profile_path) is not str or len(cover_profile_path) == 0:
+		print("Can't run tests. Invalid 'cover_profile' configuration entry.")
+
+	data["cover_profile"] = cover_profile_path % data
+
+	return data
 
 def run_tests(file_info):
 	package_full_name = file_info["package_full_name"]
@@ -116,3 +124,4 @@ def parse_coverage_profile(filename):
 		print("Error reading coverage file: ", e)
 
 	return lines
+

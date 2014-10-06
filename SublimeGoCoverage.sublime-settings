@@ -1,6 +1,7 @@
 {
-	"command_line": "go test -cover -coverprofile=%(cover_profile)s %(package_full_name)s"
+	"command_line": "go test -cover -coverprofile=%(cover_profile)s %(package_full_name)s",
+	"cover_profile_path": "%(package_dir)s/%(package_name)s.coverprofile"
 
-	// command line examples
-	// ginkgo -> %(gopath)s/bin/ginkgo -cover %(package_dir)s
+	// examples
+	// ginkgo -> "command_line": "%(gopath)s/bin/ginkgo -cover %(package_dir)s"
 }
