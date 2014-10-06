@@ -52,7 +52,7 @@ def parse_filename(filename):
 
 	cover_profile_path = sublime.load_settings(settings).get("cover_profile_path")
 
-	if type(cover_profile_path) is not str or len(cover_profile_path) == 0:
+	if not cover_profile_path:
 		print("Can't run tests. Invalid 'cover_profile' configuration entry.")
 
 	data["cover_profile"] = cover_profile_path % data
@@ -68,7 +68,7 @@ def run_tests(file_info):
 	
 	command_line = sublime.load_settings(settings).get("command_line")
 
-	if type(command_line) is not str or len(command_line) == 0:
+	if not command_line:
 		print("Can't run tests. Invalid 'command_line' configuration entry.")
 
 	try:
