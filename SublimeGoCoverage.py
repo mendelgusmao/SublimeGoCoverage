@@ -71,11 +71,23 @@ def run_tests(file_info):
 	if not command_line:
 		print("Can't run tests. Invalid 'command_line' configuration entry.")
 
+	handler = None
+
 	try:
-		subprocess.check_output(shlex.split(command_line % file_info))
+		handler = subprocess.Popen(
+			shlex.split(command_line % file_info),
+			stdout=subprocess.PIPE,
+			stderr=subprocess.STDOUT)
+		output = handler.communicate()[0]
 	except subprocess.CalledProcessError as e:
 		print("Error running tests:", e)
+		print(output)
 		return False
+	finally:
+		if handler.returncode > 0:
+			print("Error running tests:")
+			print(output)
+			return False
 
 	return True
 
