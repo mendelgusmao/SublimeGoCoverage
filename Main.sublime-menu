@@ -15,7 +15,7 @@
                             {
                                 "caption": "Settings \u2013 Default", 
                                 "args": {
-                                    "file": "${packages}/SublimeGoCoverage/SublimeGoCoverage.sublime-settings"
+                                    "file": "${packages}/Go Coverage/SublimeGoCoverage.sublime-settings"
                                 }, 
                                 "command": "open_file"
                             }, 

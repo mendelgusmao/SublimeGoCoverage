@@ -1,5 +1,6 @@
 {
-	"command_line": "go test -cover -coverprofile=%(cover_profile)s %(package_full_name)s",
+	"on_save": true,
+	"command_line": "go test -cover -coverprofile=%(cover_profile)s -covermode=count %(package_full_name)s",
 	"cover_profile_path": "%(package_dir)s/%(package_name)s.coverprofile"
 
 	// examples

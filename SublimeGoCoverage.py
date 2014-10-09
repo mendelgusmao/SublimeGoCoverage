@@ -13,7 +13,10 @@ class ShowGoCoverageListener(sublime_plugin.EventListener):
 	"""Event listener to highlight uncovered lines when a Go file is loaded."""
 
 	def on_post_save_async(self, view):
-		view.run_command("show_go_coverage")
+		on_save = sublime.load_settings(settings).get("on_save")
+
+		if on_save:
+			view.run_command("show_go_coverage")
 
 	def on_load_async(self, view):
 		create_outlines(view, parse_filename(view.file_name()))
@@ -79,12 +82,11 @@ def run_tests(file_info):
 			stdout=subprocess.PIPE,
 			stderr=subprocess.STDOUT)
 		output = handler.communicate()[0]
-	except subprocess.CalledProcessError as e:
+	except Exception as e:
 		print("Error running tests:", e)
-		print(output)
 		return False
 	finally:
-		if handler.returncode > 0:
+		if handler and handler.returncode > 0:
 			print("Error running tests:")
 			print(output)
 			return False
