@@ -96,10 +96,11 @@ def run_tests(file_info):
 def update_views(file_info):
 	for window in sublime.windows():
 		for view in window.views():
-			other_file_info = parse_filename(view.file_name())
+			if view.file_name():
+				other_file_info = parse_filename(view.file_name())
 
-			if file_info["package_full_name"] == other_file_info["package_full_name"]:
-				create_outlines(view, other_file_info)
+				if file_info["package_full_name"] == other_file_info["package_full_name"]:
+					create_outlines(view, other_file_info)
 
 def create_outlines(view, file_info):
 	print("Creating outlines for", file_info["filename"])
