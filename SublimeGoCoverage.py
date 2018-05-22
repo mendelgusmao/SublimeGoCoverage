@@ -46,7 +46,13 @@ class ShowGoCoverageCommand(sublime_plugin.TextCommand):
 def parse_filename(filename):
     package_dir = os.path.dirname(filename)
     package_name = os.path.basename(package_dir)
-    package_full_name = package_dir.replace(gopath + "/src/", "")
+
+    package_full_name = package_dir
+    for subpath in gopath.split(":"):
+        if package_dir.startswith(subpath):
+            package_full_name = package_dir.replace(subpath + "/src/", "")
+    if package_full_name.startswith("/"):
+        print("Invalid package_dir: '{}' is not in GOPATH '{}'".format(package_full_name, gopath))
 
     data = {
         "gopath": gopath,
