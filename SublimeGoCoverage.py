@@ -20,6 +20,8 @@ class ShowGoCoverageListener(sublime_plugin.EventListener):
             view.run_command("show_go_coverage")
 
     def on_load_async(self, view):
+        if "source.go" not in view.scope_name(0):
+            return
         create_outlines(view, parse_filename(view.file_name()))
 
 
@@ -105,6 +107,9 @@ def run_tests(file_info):
 def update_views(file_info):
     for view in sublime.active_window().views():
         if view.file_name():
+            if "source.go" not in view.scope_name(0):
+                continue
+
             other_file_info = parse_filename(view.file_name())
 
             if file_info["package_full_name"] == other_file_info["package_full_name"]:
